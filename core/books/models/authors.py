@@ -1,10 +1,10 @@
 from django.db import models
-from .book import Book
+from .books import Book
 
 
 class Author(models.Model):
     name = models.CharField(max_length=225)
-    books = models.ManyToManyField(Book)
+    writed_books = models.ManyToManyField('Book', related_name='authors', blank=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -13,3 +13,4 @@ class Author(models.Model):
 
     def __str__(self):
         return self.name
+
