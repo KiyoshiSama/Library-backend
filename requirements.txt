@@ -3,3 +3,5 @@ python-decouple
 djangorestframework
 pytest
 pytest-django
+djangorestframework-simplejwt
+drf-spectacular

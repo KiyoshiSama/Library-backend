@@ -25,7 +25,7 @@ class BookSerializer(serializers.ModelSerializer):
             "page_number",
             "authors",
         )
-        extra_kwargs = {"authors": {"required": False}}
+        # extra_kwargs = {"authors": {"required": False}}
 
 
 class CategorySerializer(serializers.ModelSerializer):
