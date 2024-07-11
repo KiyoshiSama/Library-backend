@@ -1,13 +1,8 @@
 from rest_framework import serializers
-from ...models import (Author,Book,Category,Publisher)
+from ..models import Author, Book, Category, Publisher
 
 
-class NestedAuthorSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Author
-        fields = ["name"]
-
-class DetailAuthorSerializer(serializers.ModelSerializer):
+class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Author
         fields = ["id", "name", "writed_books"]
@@ -15,14 +10,21 @@ class DetailAuthorSerializer(serializers.ModelSerializer):
 
 
 class BookSerializer(serializers.ModelSerializer):
-    authors = NestedAuthorSerializer(many=True, read_only=True)
-    publisher = serializers.StringRelatedField()
-    category = serializers.StringRelatedField()
+    authors = AuthorSerializer(many=True, read_only=True)
 
     class Meta:
         ordering = ["title"]
         model = Book
-        fields = ("id", "title", "description", "publisher", "category", "publish_date", "page_number", "authors")
+        fields = (
+            "id",
+            "title",
+            "description",
+            "publisher",
+            "category",
+            "publish_date",
+            "page_number",
+            "authors",
+        )
         extra_kwargs = {"authors": {"required": False}}
 
 

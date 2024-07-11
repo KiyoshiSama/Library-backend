@@ -1,3 +1,5 @@
 django >4.2,<4.3
 python-decouple
 djangorestframework
+pytest
+pytest-django

@@ -6,7 +6,7 @@ from django.conf import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
-    path("books/", include("books.urls")),
+    path("api/books/", include("books.api.urls")),
     path('prepaid-auth/', include('rest_framework.urls')),
 ]
 
