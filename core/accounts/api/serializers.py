@@ -13,7 +13,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs.get("password") != attrs.get("password1"):
-            raise serializers.ValidationError({"detail": "passwords doesn't match"})
+            raise serializers.ValidationError({"detail": "passwords don't match"})
 
         try:
             validate_password(attrs.get("password"))

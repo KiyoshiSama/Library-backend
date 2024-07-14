@@ -3,7 +3,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .serializers import (
     AuthorSerializer,
-    BookSerializer,
+    BookDetailSerializer,
+    BookListSerializer,
     CategorySerializer,
     PublisherSerializer,
 )
@@ -13,17 +14,20 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class AuthorsViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
     serializer_class = AuthorSerializer
+    permission_classes = [IsAuthenticated]
     queryset = Author.objects.all()
+
 
 
 class BooksViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = BookSerializer
     queryset = Book.objects.all()
-
+    def get_serializer_class(self):
+        if self.action == "list":
+            return BookListSerializer
+        return BookDetailSerializer
 
 class CategoriesViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]

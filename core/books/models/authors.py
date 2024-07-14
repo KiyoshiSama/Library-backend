@@ -9,7 +9,7 @@ class Author(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["name"]
+        ordering = ["-id"] 
 
     def __str__(self):
         return self.name

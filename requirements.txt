@@ -5,3 +5,5 @@ pytest
 pytest-django
 djangorestframework-simplejwt
 drf-spectacular
+django-environ
+faker

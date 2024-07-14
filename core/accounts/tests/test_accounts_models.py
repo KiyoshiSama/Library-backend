@@ -1,19 +1,21 @@
 from django.test import TestCase
 from accounts.models import User
+from faker import Faker
 
 class UserModelTestCase(TestCase):
     def setUp(self):
+        self.fake = Faker()
         self.user_data = {
-            "email": "user@test.com",
-            "password": "testpassword",
-            "first_name": "John",
-            "last_name": "Doe"
+            "email": self.fake.email(),
+            "password": self.fake.password(),
+            "first_name": self.fake.first_name(),
+            "last_name": self.fake.last_name(),
         }
         self.superuser_data = {
-            "email": "superuser@test.com",
-            "password": "superpassword",
-            "first_name": "Admin",
-            "last_name": "User"
+            "email": self.fake.email(),
+            "password": self.fake.password(),
+            "first_name": self.fake.first_name(),
+            "last_name": self.fake.last_name(),
         }
 
     def test_create_user(self):
@@ -50,8 +52,7 @@ class UserModelTestCase(TestCase):
 
     def test_create_superuser_with_missing_fields(self):
         superuser = User.objects.create_superuser(
-            email=self.superuser_data["email"],
-            password=self.superuser_data["password"]
+            email=self.superuser_data["email"], password=self.superuser_data["password"]
         )
         self.assertTrue(superuser.is_staff)
         self.assertTrue(superuser.is_superuser)

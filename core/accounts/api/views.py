@@ -8,16 +8,14 @@ from rest_framework import viewsets, status, generics
 
 
 class RegisterUserAPIView(generics.GenericAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+
     serializer_class = UserRegisterSerializer
 
     def post(self, request, *args, **kwargs):
-        serializer = UserRegisterSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            email = serializer.validated_data["email"]
-            data = {"details": "User created successfully", "email": email}
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+            data = {"User email": user.email}
             return Response(data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -27,3 +25,10 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
+
+    def partial_update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)  
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
