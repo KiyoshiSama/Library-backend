@@ -21,6 +21,7 @@ class AuthorModelTestCase(TestCase):
             category=category,
             publish_date=self.fake.date(),
             page_number=self.fake.random_int(min=1, max=1000),
+            is_available = True
         )
         self.author.writed_books.add(book)
         self.assertEqual(self.author.writed_books.count(), 1)
@@ -38,6 +39,8 @@ class BookModelTestCase(TestCase):
             category=self.category,
             publish_date=self.fake.date(),
             page_number=self.fake.random_int(min=1, max=1000),
+            is_available = True,
+
         )
 
     def test_book_creation(self):

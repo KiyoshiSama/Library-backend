@@ -10,34 +10,40 @@ from .serializers import (
 )
 from ..models import Author, Book, Publisher, Category
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 class AuthorsViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
     serializer_class = AuthorSerializer
     permission_classes = [IsAuthenticated]
     queryset = Author.objects.all()
 
 
-
 class BooksViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Book.objects.all()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = [
+        "is_available",
+    ]
+    search_fields = [
+        "name",
+    ]
+
     def get_serializer_class(self):
         if self.action == "list":
             return BookListSerializer
         return BookDetailSerializer
 
+
 class CategoriesViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = CategorySerializer
     queryset = Category.objects.all()
 
 
 class PublishersViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PublisherSerializer
     queryset = Publisher.objects.all()

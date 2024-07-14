@@ -2,7 +2,6 @@ from django.shortcuts import get_object_or_404
 from ..models import User
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from .serializers import UserProfileSerializer, UserRegisterSerializer
 from rest_framework import viewsets, status, generics
 
@@ -21,7 +20,6 @@ class RegisterUserAPIView(generics.GenericAPIView):
 
 
 class UserProfileViewSet(viewsets.ModelViewSet):
-    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer

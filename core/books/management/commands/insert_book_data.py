@@ -33,6 +33,7 @@ class Command(BaseCommand):
                 category=Category.objects.get(name=random.choice(category_list)),
                 publish_date=self.fake.date(),
                 page_number=self.fake.random_int(min=100, max=1000),
+                is_available = True
             )
 
             book.authors.add(random.choice(authors))

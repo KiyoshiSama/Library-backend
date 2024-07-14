@@ -11,6 +11,7 @@ class Book(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     publish_date = models.DateField()
     page_number = models.IntegerField()
+    is_available = models.BooleanField(default=True,blank=False)
 
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

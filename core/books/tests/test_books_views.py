@@ -79,6 +79,8 @@ class BooksViewSetTestCase(BaseViewSetTestCase):
             category=self.category,
             publish_date="2023-01-01",
             page_number=100,
+            is_available = True
+
         )
         self.url_list = reverse("books-api:books-list")
         self.url_detail = reverse("books-api:books-detail", args=[self.book.id])
@@ -100,6 +102,7 @@ class BooksViewSetTestCase(BaseViewSetTestCase):
             "category": self.category.id,
             "publish_date": "2024-01-01",
             "page_number": 200,
+            "is_available" : True,
             "authors": [{"name": "Author 1"}, {"name": "Author 2"}],
         }
 
@@ -116,6 +119,7 @@ class BooksViewSetTestCase(BaseViewSetTestCase):
             "category": self.category.id,
             "publish_date": "2024-01-01",
             "page_number": 200,
+            "is_available" : True,
             "authors": [{"name": "Author 1"}, {"name": "Author 2"}],
         }
         response = self.client.post(self.url_list, data, format="json")
@@ -129,6 +133,7 @@ class BooksViewSetTestCase(BaseViewSetTestCase):
             "category": self.category.id,
             "publish_date": "2024-01-01",
             "page_number": 150,
+            "is_available" : True,
             "authors": [{"name": "Updated Author"}],
         }
         response = self.client.put(self.url_detail, data, format="json")
@@ -144,6 +149,7 @@ class BooksViewSetTestCase(BaseViewSetTestCase):
             "category": self.category.id,
             "publish_date": "2024-01-01",
             "page_number": 150,
+            "is_available" : True,
             "authors": [{"name": "Updated Author"}],
         }
         response = self.client.put(self.url_detail, data, format="json")
