@@ -4,5 +4,5 @@ from .routers import router as books_router
 app_name = "books-api"
 
 urlpatterns = [
-    path('', include("books.api.routers")),
+    path('', include(books_router.urls)),
 ]

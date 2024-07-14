@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .serializers import (
     AuthorSerializer,
-    BookDetailSerializer,
-    BookListSerializer,
+    BookCreateUpdateSerializer,
+    BookRetrieveSerializer,
     CategorySerializer,
     PublisherSerializer,
 )
@@ -32,9 +32,9 @@ class BooksViewSet(viewsets.ModelViewSet):
     ]
 
     def get_serializer_class(self):
-        if self.action == "list":
-            return BookListSerializer
-        return BookDetailSerializer
+        if self.request.method == "GET":
+            return BookRetrieveSerializer
+        return BookCreateUpdateSerializer
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):

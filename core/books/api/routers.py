@@ -8,7 +8,4 @@ router.register(r'books', views.BooksViewSet, basename='books')
 router.register(r'categories', views.CategoriesViewSet, basename='categories')
 router.register(r'publishers', views.PublishersViewSet, basename='publishers')
 
-urlpatterns = [
-    path("", include(router.urls)),
 
-]
