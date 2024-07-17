@@ -13,4 +13,5 @@ urlpatterns = [
     path("token-refresh/", TokenRefreshView.as_view(), name="token-refresh"),
     path('', include(accounts_router.urls)),
     path("create-account/", views.RegisterUserAPIView.as_view(), name="create-account"),
+    path("active-account/",views.ActiveAccountGenericApiView.as_view(),name = "active-account"),
 ]

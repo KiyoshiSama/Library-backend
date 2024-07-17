@@ -13,7 +13,6 @@ class CustomUserAdmin(UserAdmin):
                 "fields": (
                     "is_staff",
                     "is_superuser",
-                    "is_banned",
                     "is_verified",
                     "user_permissions",
                 ),
@@ -30,15 +29,14 @@ class CustomUserAdmin(UserAdmin):
                     "email",
                     "password1",
                     "password2",
-                    "is_banned",
                     "is_verified",
                     "is_staff",
                 ),
             },
         ),
     )
-    list_display = ("email","last_name", "is_superuser","is_staff","is_banned","is_verified")
-    list_filter = ("is_staff", "is_superuser", "is_banned")
+    list_display = ("email","last_name", "is_superuser","is_staff","is_verified")
+    list_filter = ("is_staff", "is_superuser")
     search_fields = ("first_name", "last_name", "email")
     ordering = ("created",)
 

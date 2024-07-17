@@ -8,3 +8,5 @@ drf-spectacular
 django-environ
 faker
 django-filter
+coverage
+django-mail-templated
