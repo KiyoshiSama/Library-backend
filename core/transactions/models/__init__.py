@@ -1,3 +1,2 @@
-from .checkout import *
-from .hold import *
-from .wait_list import *
+from .checkouts import *
+from .holds import *

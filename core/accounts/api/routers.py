@@ -3,5 +3,5 @@ from .views import UserProfileViewSet
 from django.urls import path,include
 
 router = DefaultRouter()
-router.register(r'details', UserProfileViewSet, basename='details')
+router.register(r'accounts', UserProfileViewSet, basename='accounts')
 
