@@ -6,10 +6,13 @@ from books.models import Book
 
 @receiver(post_save, sender=Checkout)
 def update_book_availabilty(sender, instance, **kwargs):
+    book = instance.book
+    if not instance.is_returned:
+        book.is_available = False
+        book.save()
+
     if instance.is_returned:
-        # removing the first user waiting for the book from hold table and add it to checkout table
         hold_book = Hold.objects.filter(book=instance.book).first()
-        
         if hold_book:
             Checkout.objects.create(
                 start_time=hold_book.start_time,
@@ -19,9 +22,7 @@ def update_book_availabilty(sender, instance, **kwargs):
                 is_returned=False,
             )
             hold_book.delete()
-
-
-        # changing the book availablity to true if no one is on the hold list
-        # book = instance.book
-        # book.is_available = True
-        # book.save()
+        else:
+            # changing the book availablity to true if no one is on the hold list
+            book.is_available = True
+            book.save()

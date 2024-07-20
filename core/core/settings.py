@@ -19,13 +19,13 @@ import environ
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 env = environ.Env()
-environ.Env.read_env(BASE_DIR / '.env')
+environ.Env.read_env(BASE_DIR / ".env")
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env('SECRET_KEY', default='test')
-DEBUG = env.bool('DEBUG', default=True)
+SECRET_KEY = env("SECRET_KEY", default="test")
+DEBUG = env.bool("DEBUG", default=True)
 # SECURITY WARNING: don't run with debug turned on in production!
 
 ALLOWED_HOSTS = config(
@@ -48,7 +48,7 @@ INSTALLED_APPS = [
     "books",
     "transactions",
     "django_filters",
-    'mail_templated',
+    "mail_templated",
 ]
 
 MIDDLEWARE = [
@@ -113,23 +113,33 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
     ],
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=env.int('ACCESS_TOKEN_LIFETIME_MINUTES', default=60)),
-    'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=env.int('SLIDING_TOKEN_REFRESH_LIFETIME_DAYS', default=1)),
-    'SLIDING_TOKEN_LIFETIME': timedelta(days=env.int('SLIDING_TOKEN_LIFETIME_DAYS', default=30)),
-    'SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER': timedelta(days=env.int('SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS', default=1)),
-    'SLIDING_TOKEN_LIFETIME_LATE_USER': timedelta(days=env.int('SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS', default=30)),
+    "ACCESS_TOKEN_LIFETIME": timedelta(
+        minutes=env.int("ACCESS_TOKEN_LIFETIME_MINUTES", default=60)
+    ),
+    "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(
+        days=env.int("SLIDING_TOKEN_REFRESH_LIFETIME_DAYS", default=1)
+    ),
+    "SLIDING_TOKEN_LIFETIME": timedelta(
+        days=env.int("SLIDING_TOKEN_LIFETIME_DAYS", default=30)
+    ),
+    "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(
+        days=env.int("SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS", default=1)
+    ),
+    "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(
+        days=env.int("SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS", default=30)
+    ),
 }
 
 # Internationalization
@@ -166,8 +176,8 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.User"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp4dev'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp4dev"
+EMAIL_HOST_USER = ""
+EMAIL_HOST_PASSWORD = ""
 EMAIL_PORT = 25

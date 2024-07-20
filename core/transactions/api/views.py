@@ -22,9 +22,27 @@ class BorrowBookGenericView(APIView):
         serializer = BorrowBookSerializer(data=request.data)
         if serializer.is_valid():
             current_book_id = serializer.validated_data.get("book").id
+            checkout_data = serializer.validated_data
             book = get_object_or_404(Book, id=current_book_id)
-            if book.is_available:
-                checkout_data = serializer.validated_data
+            if Checkout.objects.filter(
+                customer=request.user, book=book, is_returned=False
+            ).exists():
+                return Response(
+                    {"details": "you've already reserved this book"},
+                    status=status.HTTP_200_OK,
+                )
+            elif Hold.objects.filter(customer=request.user, book=book).exists():
+                return Response(
+                    {"details": "you are already on hold list!"},
+                    status=status.HTTP_200_OK,
+                )
+
+            elif checkout_data["start_time"] > checkout_data["end_time"]:
+                return Response(
+                    {"details": "start time must be before end time!"},
+                    status=status.HTTP_200_OK,
+                )
+            elif book.is_available:
                 checkout_data["is_returned"] = False
                 checkout_data["customer"] = request.user
                 book.is_available = False
@@ -34,19 +52,7 @@ class BorrowBookGenericView(APIView):
                     {"details": "book successfully borrowed"},
                     status=status.HTTP_201_CREATED,
                 )
-            elif Checkout.objects.filter(
-                customer=request.user, book=book, is_returned=False
-            ).exists():
-                return Response(
-                    {"details": "you've already reserved this book"},
-                    status=status.HTTP_200_OK,
-                )
 
-            elif Hold.objects.filter(customer=request.user, book=book).exists():
-                return Response(
-                    {"details": "you are already on hold list!"},
-                    status=status.HTTP_200_OK,
-                )
             else:
                 serializer = PutOnHoldSerializer(data=request.data)
                 if serializer.is_valid():
@@ -85,7 +91,8 @@ class UpdateBorrowedBookGenericView(generics.RetrieveUpdateAPIView):
 class UserHoldListBooksGenericView(generics.ListAPIView):
     serializer_class = UserHoldListBooksSerializer
     permission_classes = [IsAuthenticated]
-    queryset = Checkout.objects.all()
+    queryset = Hold.objects.all()
 
     def get_queryset(self):
-        return Checkout.objects.filter(customer=self.request.user)
+        return Hold.objects.filter(customer=self.request.user)
+
