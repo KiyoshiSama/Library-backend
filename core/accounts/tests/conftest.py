@@ -1,8 +1,9 @@
 import pytest
+from faker import Faker
 from rest_framework.test import APIClient
 from accounts.models import User
-from faker import Faker
 
+faker = Faker()
 
 @pytest.fixture
 def api_client():
@@ -10,15 +11,10 @@ def api_client():
 
 
 @pytest.fixture
-def fake():
-    return Faker()
-
-
-@pytest.fixture
 def user(db):
     user = User.objects.create_user(
-        email="testuser@example.com",
-        password="TestPassword123",
+        email=faker.email(),
+        password=faker.password(),
         is_first_login=True,
         verification_code="12345",
     )
@@ -34,15 +30,17 @@ def authenticated_client(api_client, user):
 @pytest.fixture
 def user_data():
     return {
-        "email": "user@example.com",
-        "password": "password123",
-        "first_name": "John",
-        "last_name": "Doe"
+        "email": faker.email(),
+        "password": faker.password(),
+        "first_name": faker.first_name(),
+        "last_name": faker.last_name(),
     }
+
 
 @pytest.fixture
 def create_user(user_data):
     return User.objects.create_user(**user_data)
+
 
 @pytest.fixture
 def create_superuser(user_data):

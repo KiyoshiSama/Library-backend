@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from transactions.api import views
 
 urlpatterns = [

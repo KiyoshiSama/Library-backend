@@ -1,7 +1,7 @@
 import random
+from faker import Faker
 from django.core.management.base import BaseCommand
 from books.models import Author, Book, Category, Publisher
-from faker import Faker
 
 category_list = ["hi-fi", "crime", "thriller", "horror"]
 

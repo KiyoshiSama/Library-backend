@@ -1,11 +1,11 @@
 import pytest
+from datetime import timedelta
 from faker import Faker
 from rest_framework.test import APIClient
-from books.models import Author, Book, Publisher, Category
 from django.contrib.auth import get_user_model
-from datetime import datetime, timedelta
 from django.utils import timezone
 from transactions.models import Checkout, Hold
+from books.models import Author, Book, Publisher, Category
 
 User = get_user_model()
 
@@ -20,8 +20,8 @@ def api_client():
 @pytest.fixture
 def user(db):
     user = User.objects.create_user(
-        email="testuser@example.com",
-        password="TestPassword123!@#",
+        email=faker.email(),
+        password=faker.password(),
     )
     return user
 
@@ -61,10 +61,9 @@ def checkout(db, user, book):
         end_time=(timezone.now() + timedelta(days=14)).date(),
         book=book,
         customer=user,
-        is_returned=False
+        is_returned=False,
     )
     return checkout
-
 
 
 @pytest.fixture
@@ -73,8 +72,6 @@ def hold(db, user, book):
         start_time=timezone.now().date(),
         end_time=(timezone.now() + timedelta(days=14)).date(),
         book=book,
-        customer=user
+        customer=user,
     )
     return hold
-
-

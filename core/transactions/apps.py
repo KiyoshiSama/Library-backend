@@ -6,4 +6,4 @@ class TransactionsConfig(AppConfig):
     name = "transactions"
 
     def ready(self):
-        import transactions.api.receivers
+        import transactions.api.signals

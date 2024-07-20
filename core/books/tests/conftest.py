@@ -1,8 +1,8 @@
 import pytest
 from faker import Faker
 from rest_framework.test import APIClient
-from books.models import Author, Book, Publisher, Category
 from django.contrib.auth import get_user_model
+from books.models import Author, Book, Publisher, Category
 
 User = get_user_model()
 
@@ -17,8 +17,8 @@ def api_client():
 @pytest.fixture
 def user(db):
     user = User.objects.create_user(
-        email="testuser@example.com",
-        password="TestPassword123!@#",
+        email=faker.email(),
+        password=faker.password(),
     )
     return user
 
@@ -59,7 +59,3 @@ def book(authors, publisher, category):
     return book
 
 
-import pytest
-from rest_framework.test import APIClient
-from accounts.models import User
-from faker import Faker

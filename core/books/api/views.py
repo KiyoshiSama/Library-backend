@@ -1,5 +1,8 @@
 from rest_framework import viewsets
-from .serializers import (
+from rest_framework import filters
+from rest_framework.permissions import IsAuthenticated
+from django_filters.rest_framework import DjangoFilterBackend
+from books.api.serializers import (
     AuthorSerializer,
     BookCreateUpdateSerializer,
     BookRetrieveSerializer,
@@ -7,9 +10,6 @@ from .serializers import (
     PublisherSerializer,
 )
 from books.models import Author, Book, Publisher, Category
-from rest_framework.permissions import IsAuthenticated
-from rest_framework import filters
-from django_filters.rest_framework import DjangoFilterBackend
 
 
 class AuthorsViewSet(viewsets.ModelViewSet):

@@ -11,6 +11,7 @@ class Hold(models.Model):
 
     create_date = models.DateTimeField(auto_now=True)
 
-    ordering= ["create_date"]
+    ordering = ["create_date"]
+
     def __str__(self):
         return f"Hold: {self.book.title} - {self.customer.email}"

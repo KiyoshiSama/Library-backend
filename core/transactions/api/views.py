@@ -1,8 +1,8 @@
-from rest_framework import viewsets, status, generics
+from rest_framework import status, generics
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import get_user_model
-from books.models import Book
 from transactions.api.serializers import (
     BorrowBookSerializer,
     PutOnHoldSerializer,
@@ -10,8 +10,7 @@ from transactions.api.serializers import (
     UserHoldListBooksSerializer,
 )
 from transactions.models import Checkout, Hold
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
+from books.models import Book
 
 
 class BorrowBookGenericView(APIView):
@@ -95,4 +94,3 @@ class UserHoldListBooksGenericView(generics.ListAPIView):
 
     def get_queryset(self):
         return Hold.objects.filter(customer=self.request.user)
-

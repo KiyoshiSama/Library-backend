@@ -1,15 +1,15 @@
+import random
 from django.shortcuts import get_object_or_404
-from accounts.models.users import User
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from .serializers import (
+from rest_framework import status, generics
+from mail_templated import EmailMessage
+from accounts.api.serializers import (
     UserProfileSerializer,
     UserRegisterSerializer,
     VerificationCodeSerialzier,
 )
-from rest_framework import status, generics
-from mail_templated import EmailMessage
-import random
+from accounts.models.users import User
 
 
 class RegisterUserAPIView(generics.GenericAPIView):

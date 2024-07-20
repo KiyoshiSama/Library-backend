@@ -1,7 +1,6 @@
-from io import StringIO
+from faker import Faker
 from django.core.management.base import BaseCommand
 from accounts.models import User
-from faker import Faker
 
 
 class Command(BaseCommand):

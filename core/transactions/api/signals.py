@@ -1,7 +1,6 @@
-from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.db.models.signals import post_save
 from transactions.models import Checkout, Hold
-from books.models import Book
 
 
 @receiver(post_save, sender=Checkout)

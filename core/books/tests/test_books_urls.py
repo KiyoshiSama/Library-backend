@@ -1,7 +1,7 @@
 import pytest
-from django.urls import reverse
 from rest_framework import status
 from faker import Faker
+from django.urls import reverse
 from books.models import Author, Book, Publisher, Category
 
 faker = Faker()

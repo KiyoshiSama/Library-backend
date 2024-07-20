@@ -1,8 +1,8 @@
 from django.urls import path, include
-from .routers import router as books_router
+from books.api.routers import router
 
 app_name = "books-api"
 
 urlpatterns = [
-    path('', include(books_router.urls)),
+    path("", include(router.urls)),
 ]
