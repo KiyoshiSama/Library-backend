@@ -1,66 +1,57 @@
-from django.test import TestCase
-from accounts.models import User
-from faker import Faker
+import pytest
+from django.core.exceptions import ValidationError
+from accounts.models.users import User
 
-class UserModelTestCase(TestCase):
-    def setUp(self):
-        self.fake = Faker()
-        self.user_data = {
-            "email": self.fake.email(),
-            "password": self.fake.password(),
-            "first_name": self.fake.first_name(),
-            "last_name": self.fake.last_name(),
-        }
-        self.superuser_data = {
-            "email": self.fake.email(),
-            "password": self.fake.password(),
-            "first_name": self.fake.first_name(),
-            "last_name": self.fake.last_name(),
-        }
 
-    def test_create_user(self):
-        user = User.objects.create_user(**self.user_data)
-        self.assertEqual(user.email, self.user_data["email"])
-        self.assertTrue(user.check_password(self.user_data["password"]))
-        self.assertFalse(user.is_staff)
-        self.assertFalse(user.is_superuser)
-        self.assertFalse(user.is_verified)
-        self.assertFalse(user.is_banned)
+@pytest.mark.django_db
+class TestUserModel:
 
-    def test_create_superuser(self):
-        superuser = User.objects.create_superuser(**self.superuser_data)
-        self.assertEqual(superuser.email, self.superuser_data["email"])
-        self.assertTrue(superuser.check_password(self.superuser_data["password"]))
-        self.assertTrue(superuser.is_staff)
-        self.assertTrue(superuser.is_superuser)
-        self.assertTrue(superuser.is_verified)
-        self.assertFalse(superuser.is_banned)
+    @pytest.mark.django_db
+    def test_create_user(self, create_user, user_data):
+        user = create_user
+        assert user.email == user_data["email"]
+        assert user.check_password(user_data["password"])
+        assert user.first_name == user_data["first_name"]
+        assert user.last_name == user_data["last_name"]
+        assert not user.is_staff
+        assert not user.is_superuser
+        assert not user.is_verified
 
-    def test_user_str(self):
-        user = User.objects.create_user(**self.user_data)
-        self.assertEqual(str(user), self.user_data["email"])
+    @pytest.mark.django_db
+    def test_create_superuser(self, create_superuser, user_data):
+        superuser = create_superuser
+        assert superuser.email == user_data["email"]
+        assert superuser.check_password(user_data["password"])
+        assert superuser.first_name == user_data["first_name"]
+        assert superuser.last_name == user_data["last_name"]
+        assert superuser.is_staff
+        assert superuser.is_superuser
+        assert superuser.is_verified
 
-    def test_create_user_without_email(self):
-        with self.assertRaises(ValueError) as context:
-            User.objects.create_user(email=None, password="testpassword")
-        self.assertEqual(str(context.exception), "Wrong email!")
+    @pytest.mark.django_db
+    def test_create_user_without_email(self, user_data):
+        user_data.pop("email")
+        with pytest.raises(ValueError) as excinfo:
+            User.objects.create_user(**user_data, email="")
+        assert str(excinfo.value) == "Wrong email!"
 
-    def test_create_user_with_invalid_email(self):
-        with self.assertRaises(ValueError) as context:
-            User.objects.create_user(email="", password="testpassword")
-        self.assertEqual(str(context.exception), "Wrong email!")
+    @pytest.mark.django_db
+    def test_create_superuser_without_is_staff(self, user_data):
+        user_data.update({"is_staff": False})
+        with pytest.raises(ValueError) as excinfo:
+            User.objects.create_superuser(**user_data)
+        assert str(excinfo.value) == "Superuser must have is_staff=True."
 
-    def test_create_superuser_with_missing_fields(self):
-        superuser = User.objects.create_superuser(
-            email=self.superuser_data["email"], password=self.superuser_data["password"]
-        )
-        self.assertTrue(superuser.is_staff)
-        self.assertTrue(superuser.is_superuser)
-        self.assertTrue(superuser.is_verified)
+    @pytest.mark.django_db
+    def test_create_superuser_without_is_superuser(self, user_data):
+        user_data.update({"is_superuser": False})
+        with pytest.raises(ValueError) as excinfo:
+            User.objects.create_superuser(**user_data)
+        assert str(excinfo.value) == "Superuser must have is_superuser=True."
 
-    def test_default_values(self):
-        user = User.objects.create_user(**self.user_data)
-        self.assertFalse(user.is_staff)
-        self.assertFalse(user.is_superuser)
-        self.assertFalse(user.is_verified)
-        self.assertFalse(user.is_banned)
+    @pytest.mark.django_db
+    def test_create_superuser_without_is_verified(self, user_data):
+        user_data.update({"is_verified": False})
+        with pytest.raises(ValueError) as excinfo:
+            User.objects.create_superuser(**user_data)
+        assert str(excinfo.value) == "Superuser must have is_verified=True."

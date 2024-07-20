@@ -1,25 +1,29 @@
+import pytest
 from django.urls import reverse, resolve
+from accounts.api.views import RegisterUserAPIView, ActiveAccountGenericApiView, UserProfileGenericView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from accounts.api.views import RegisterUserAPIView, UserProfileViewSet
-from django.test import SimpleTestCase
 
-class AccountsApiUrlsTestCase(SimpleTestCase):
-    def test_token_create_url_resolves(self):
-        url = reverse('accounts-api:token-obtain-pair')
-        self.assertEqual(resolve(url).func.view_class, TokenObtainPairView)
+@pytest.mark.django_db
+def test_register_user_url():
+    url = reverse('accounts-api:create-account')
+    assert resolve(url).func.view_class == RegisterUserAPIView
 
-    def test_token_refresh_url_resolves(self):
-        url = reverse('accounts-api:token-refresh')
-        self.assertEqual(resolve(url).func.view_class, TokenRefreshView)
+@pytest.mark.django_db
+def test_active_account_url():
+    url = reverse('accounts-api:active-account')
+    assert resolve(url).func.view_class == ActiveAccountGenericApiView
 
-    def test_create_account_url_resolves(self):
-        url = reverse('accounts-api:create-account')
-        self.assertEqual(resolve(url).func.view_class, RegisterUserAPIView)
+@pytest.mark.django_db
+def test_user_profile_url():
+    url = reverse('accounts-api:accounts')
+    assert resolve(url).func.view_class == UserProfileGenericView
 
-    def test_account_details_list_url_resolves(self):
-        url = reverse('accounts-api:account-details-list')
-        self.assertEqual(resolve(url).func.cls, UserProfileViewSet)
+@pytest.mark.django_db
+def test_token_create_url():
+    url = reverse('accounts-api:token-obtain-pair')
+    assert resolve(url).func.view_class == TokenObtainPairView
 
-    def test_account_details_detail_url_resolves(self):
-        url = reverse('accounts-api:account-details-detail', kwargs={'pk': 1})
-        self.assertEqual(resolve(url).func.cls, UserProfileViewSet)
+@pytest.mark.django_db
+def test_token_refresh_url():
+    url = reverse('accounts-api:token-refresh')
+    assert resolve(url).func.view_class == TokenRefreshView

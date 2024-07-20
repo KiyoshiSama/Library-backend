@@ -1,18 +1,22 @@
 from django.shortcuts import get_object_or_404
-from ..models import User
+from accounts.models.users import User
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated,AllowAny
-from .serializers import UserProfileSerializer, UserRegisterSerializer,VerificationCodeSerialzier
-from rest_framework import viewsets, status, generics
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from .serializers import (
+    UserProfileSerializer,
+    UserRegisterSerializer,
+    VerificationCodeSerialzier,
+)
+from rest_framework import status, generics
 from mail_templated import EmailMessage
 import random
-from rest_framework.views import APIView
 
 
 class RegisterUserAPIView(generics.GenericAPIView):
 
     serializer_class = UserRegisterSerializer
-    permission_classes = [AllowAny] 
+    permission_classes = [AllowAny]
+
     def post(self, request, *args, **kwargs):
         serializer = UserRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -31,7 +35,8 @@ class RegisterUserAPIView(generics.GenericAPIView):
 
         data = {"User email": user.email}
         return Response(data, status=status.HTTP_201_CREATED)
-    
+
+
 class ActiveAccountGenericApiView(generics.GenericAPIView):
     serializer_class = VerificationCodeSerialzier
     permission_classes = [IsAuthenticated]
@@ -49,8 +54,14 @@ class ActiveAccountGenericApiView(generics.GenericAPIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class UserProfileViewSet(viewsets.ModelViewSet):
+
+class UserProfileGenericView(generics.RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
 
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(queryset, email=self.request.user.email)
+
+        return obj
