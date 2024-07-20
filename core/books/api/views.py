@@ -1,6 +1,4 @@
-from rest_framework import viewsets, status, generics
-from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
+from rest_framework import viewsets
 from .serializers import (
     AuthorSerializer,
     BookCreateUpdateSerializer,
@@ -8,7 +6,7 @@ from .serializers import (
     CategorySerializer,
     PublisherSerializer,
 )
-from ..models import Author, Book, Publisher, Category
+from books.models import Author, Book, Publisher, Category
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend

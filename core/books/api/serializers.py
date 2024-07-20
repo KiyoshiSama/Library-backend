@@ -31,7 +31,7 @@ class BookCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class BookRetrieveSerializer(serializers.ModelSerializer):
-    authors = AuthorSerializer(many=True,read_only=True)
+    authors = AuthorSerializer(many=True, read_only=True)
 
     class Meta:
         model = Book
@@ -46,6 +46,7 @@ class BookRetrieveSerializer(serializers.ModelSerializer):
             "is_available",
             "authors",
         )
+
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
