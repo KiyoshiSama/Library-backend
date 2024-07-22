@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     "transactions",
     "django_filters",
     "mail_templated",
-    'django_celery_beat',
 
 ]
 

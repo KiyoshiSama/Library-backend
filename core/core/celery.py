@@ -1,6 +1,6 @@
 import os
 from celery import Celery
-from celery.schedules import crontab
+from celery.schedules import crontab, timedelta
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "core.settings")
 
@@ -12,6 +12,6 @@ app.autodiscover_tasks()
 app.conf.beat_schedule = {
     'check-due-books-every-10-seconds': {
         'task': 'transactions.tasks.send_borrow_ending_alert',
-        'schedule': crontab(hour=0, minute=0),
+        'schedule': timedelta(seconds=10),  # Run every 10 seconds
     },
 }
