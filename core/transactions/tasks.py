@@ -16,6 +16,7 @@ def send_borrow_ending_alert():
                 {
                     "days_remaining": (checkout.end_time - now().date()).days,
                     "user_first_name": checkout.customer.first_name,
+                    "book_name" : checkout.book.title
                 },
                 "admin@admin.com",
                 to=[checkout.customer.email],

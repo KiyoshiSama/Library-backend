@@ -13,3 +13,4 @@ django-mail-templated
 celery
 redis
 django-celery-beat
+django-redis
