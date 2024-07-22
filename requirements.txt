@@ -10,3 +10,6 @@ faker
 django-filter
 coverage
 django-mail-templated
+celery
+redis
+django-celery-beat

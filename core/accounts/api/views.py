@@ -1,15 +1,14 @@
-import random
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, generics
-from mail_templated import EmailMessage
 from accounts.api.serializers import (
     UserProfileSerializer,
     UserRegisterSerializer,
     VerificationCodeSerialzier,
 )
 from accounts.models.users import User
+from accounts.tasks import send_activation_email
 
 
 class RegisterUserAPIView(generics.GenericAPIView):
@@ -21,21 +20,18 @@ class RegisterUserAPIView(generics.GenericAPIView):
         serializer = UserRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        verification_code = str(random.randint(10000, 99999))
-        user.verification_code = verification_code
         user.save()
         email = serializer.validated_data["email"]
-        email_obj = EmailMessage(
-            "email/activation_email.tpl",
-            {"verification_code": verification_code},
-            "admin@admin.com",
-            to=[email],
-        )
-        email_obj.send()
-
-        data = {"User email": user.email}
-        return Response(data, status=status.HTTP_201_CREATED)
-
+        
+        try:
+            send_activation_email.delay(user.id, email)
+            data = {"User email": user.email, "details": "Activation email sent successfully"}
+            return Response(data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response(
+                {"details": f"Failed to send activation email: {str(e)}"},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 class ActiveAccountGenericApiView(generics.GenericAPIView):
     serializer_class = VerificationCodeSerialzier
