@@ -206,3 +206,13 @@ CACHES = {
         },
     }
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Library api",
+    "DESCRIPTION": "api doc for a library",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "displayRequestDuration": True,
+    },
+}
