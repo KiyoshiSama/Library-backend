@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.core import exceptions
+from django.core.cache import cache
 from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
 from accounts.models import User
@@ -45,11 +46,15 @@ class VerificationCodeSerialzier(serializers.Serializer):
         verification_code = attrs.get("verification_code")
         request = self.context.get("request")
         user = request.user
+        defined_verification_code = cache.get(str(user.id))
 
+        if not defined_verification_code:
+            raise serializers.ValidationError({"details": "you took so long!the code has expired."})
         if not user.is_first_login:
             raise serializers.ValidationError({"details": "account already confirmed"})
-        if user.verification_code != verification_code:
+        if defined_verification_code != verification_code:
             raise serializers.ValidationError({"details": "Invalid activation code"})
+
 
         return attrs
 
@@ -59,5 +64,4 @@ class VerificationCodeSerialzier(serializers.Serializer):
 
         user.is_verified = True
         user.is_first_login = False
-        user.verification_code = None
         user.save()

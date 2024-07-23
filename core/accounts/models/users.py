@@ -36,7 +36,6 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
-    verification_code = models.CharField(max_length=6, blank=True, null=True)
     is_first_login = models.BooleanField(default=True)
     first_name = models.CharField(max_length=250)
     last_name = models.CharField(max_length=250)
