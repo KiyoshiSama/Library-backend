@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.core import exceptions
 from django.core.cache import cache
 from django.contrib.auth.password_validation import validate_password
@@ -57,3 +58,14 @@ class VerificationCodeSerialzier(serializers.Serializer):
         user.is_verified = True
         user.is_first_login = False
         user.save()
+
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        validated_data = super().validate(attrs)
+        if not self.user.is_verified:
+            raise serializers.ValidationError({"details": _("user is not verified")})
+
+        validated_data["email"] = self.user.email
+        validated_data["user_id"] = self.user.id
+        return validated_data

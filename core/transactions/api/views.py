@@ -62,12 +62,17 @@ class BorrowBookGenericView(APIView):
                     hold_data["customer"] = request.user
                     serializer.save()
                 return Response(
-                    {"detail": _("book is not avaiable, we'll put you on hold instead")},
+                    {
+                        "detail": _(
+                            "book is not avaiable, we'll put you on hold instead"
+                        )
+                    },
                     status=status.HTTP_201_CREATED,
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@method_decorator(cache_page(60*15), name='dispatch')
+
+@method_decorator(cache_page(60 * 15), name="dispatch")
 class UserBorrowedBooksGenericView(generics.ListAPIView):
     serializer_class = UserBorrowedBooksSerializer
     permission_classes = [IsAuthenticated]
@@ -89,7 +94,8 @@ class UpdateBorrowedBookGenericView(generics.RetrieveUpdateAPIView):
         )
         return obj
 
-@method_decorator(cache_page(60*15), name='dispatch')
+
+@method_decorator(cache_page(60 * 15), name="dispatch")
 class UserHoldListBooksGenericView(generics.ListAPIView):
     serializer_class = UserHoldListBooksSerializer
     permission_classes = [IsAuthenticated]

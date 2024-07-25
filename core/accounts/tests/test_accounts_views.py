@@ -4,17 +4,18 @@ from django.urls import reverse
 
 
 @pytest.mark.django_db
-def test_register_user(api_client, faker):
+def test_register_user(api_client, faker, user):
     url = reverse("accounts-api:create-account")
+    email = faker.email()
     password = faker.password()
     data = {
-        "email": faker.email(),
+        "email": email,
         "password": password,
         "password1": password,
     }
     response = api_client.post(url, data, format="json")
     assert response.status_code == status.HTTP_201_CREATED
-    assert "Account created and Activation code has successfully been sent to " in response.data
+    assert response.data["email"] == email
 
 
 @pytest.mark.django_db

@@ -18,7 +18,7 @@ def test_borrow_book(authenticated_client, book):
     }
     response = authenticated_client.post(url, data, format="json")
     assert response.status_code == 201
-    assert response.data["details"] == "book successfully borrowed"
+    assert response.data["detail"] == "book successfully borrowed"
     book.refresh_from_db()
     assert not book.is_available
 
@@ -36,7 +36,7 @@ def test_borrow_book_already_reserved(authenticated_client, book, checkout):
     }
     response = authenticated_client.post(url, data, format="json")
     assert response.status_code == 200
-    assert response.data["details"] == "you've already reserved this book"
+    assert response.data["detail"] == "you've already reserved this book"
 
 
 @pytest.mark.django_db

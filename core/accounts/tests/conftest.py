@@ -5,6 +5,7 @@ from accounts.models import User
 
 faker = Faker()
 
+
 @pytest.fixture
 def api_client():
     return APIClient()

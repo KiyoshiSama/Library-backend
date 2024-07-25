@@ -215,3 +215,4 @@ SPECTACULAR_SETTINGS = {
         "displayRequestDuration": True,
     },
 }
+
