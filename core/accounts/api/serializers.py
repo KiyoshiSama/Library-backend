@@ -4,6 +4,7 @@ from django.core.cache import cache
 from django.contrib.auth.password_validation import validate_password
 from django.utils.translation import gettext_lazy as _
 from accounts.models import User
+from accounts.api.utils import validate_verification_code
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -15,7 +16,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs.get("password") != attrs.get("password1"):
-            raise serializers.ValidationError({"detail": "passwords don't match"})
+            raise serializers.ValidationError({"detail": _("passwords don't match")})
 
         try:
             validate_password(attrs.get("password"))
@@ -46,16 +47,7 @@ class VerificationCodeSerialzier(serializers.Serializer):
         verification_code = attrs.get("verification_code")
         request = self.context.get("request")
         user = request.user
-        defined_verification_code = cache.get(str(user.id))
-
-        if not defined_verification_code:
-            raise serializers.ValidationError({"details": "you took so long!the code has expired."})
-        if not user.is_first_login:
-            raise serializers.ValidationError({"details": "account already confirmed"})
-        if defined_verification_code != verification_code:
-            raise serializers.ValidationError({"details": "Invalid activation code"})
-
-
+        validate_verification_code(user, verification_code)
         return attrs
 
     def save(self):

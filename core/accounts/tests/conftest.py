@@ -16,7 +16,6 @@ def user(db):
         email=faker.email(),
         password=faker.password(),
         is_first_login=True,
-        verification_code="12345",
     )
     return user
 

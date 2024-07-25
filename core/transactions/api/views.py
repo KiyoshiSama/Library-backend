@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from django.utils.translation import gettext_lazy as _
 from transactions.api.serializers import (
     BorrowBookSerializer,
     PutOnHoldSerializer,
@@ -29,18 +30,18 @@ class BorrowBookGenericView(APIView):
                 customer=request.user, book=book, is_returned=False
             ).exists():
                 return Response(
-                    {"details": "you've already reserved this book"},
+                    {"detail": _("you've already reserved this book")},
                     status=status.HTTP_200_OK,
                 )
             elif Hold.objects.filter(customer=request.user, book=book).exists():
                 return Response(
-                    {"details": "you are already on hold list!"},
+                    {"detail": _("you are already on hold list!")},
                     status=status.HTTP_200_OK,
                 )
 
             elif checkout_data["start_time"] > checkout_data["end_time"]:
                 return Response(
-                    {"details": "start time must be before end time!"},
+                    {"detail": _("start time must be before end time!")},
                     status=status.HTTP_200_OK,
                 )
             elif book.is_available:
@@ -50,7 +51,7 @@ class BorrowBookGenericView(APIView):
                 book.save()
                 serializer.save()
                 return Response(
-                    {"details": "book successfully borrowed"},
+                    {"detail": _("book successfully borrowed")},
                     status=status.HTTP_201_CREATED,
                 )
 
@@ -61,7 +62,7 @@ class BorrowBookGenericView(APIView):
                     hold_data["customer"] = request.user
                     serializer.save()
                 return Response(
-                    {"details": "book is not avaiable, we'll put you on hold instead"},
+                    {"detail": _("book is not avaiable, we'll put you on hold instead")},
                     status=status.HTTP_201_CREATED,
                 )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

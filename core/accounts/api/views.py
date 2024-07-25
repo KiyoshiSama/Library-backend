@@ -2,6 +2,7 @@ from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import get_object_or_404
+from django.utils.translation import gettext_lazy as _
 from accounts.api.serializers import (
     UserProfileSerializer,
     UserRegisterSerializer,
@@ -12,7 +13,6 @@ from accounts.tasks import send_verification_code_task
 
 
 class RegisterUserAPIView(generics.GenericAPIView):
-
     serializer_class = UserRegisterSerializer
     permission_classes = [AllowAny]
 
@@ -20,10 +20,11 @@ class RegisterUserAPIView(generics.GenericAPIView):
         serializer = UserRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        send_verification_code_task.delay(user.id, user.email)
+        send_verification_code_task.delay(user.id)
         return Response(
             {
-                "Account created and Activation code has successfully been sent to ": user.email
+                "detail": _("Account created and Activation code has successfully been sent"),
+                "email": user.email
             },
             status=status.HTTP_201_CREATED,
         )
@@ -34,7 +35,6 @@ class ActiveAccountGenericApiView(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-
         serializer = self.get_serializer(
             data=request.data, context={"request": request}
         )
@@ -42,7 +42,7 @@ class ActiveAccountGenericApiView(generics.GenericAPIView):
         if serializer.is_valid():
             serializer.save()
             return Response(
-                {"detail": "Account confirmed successfully"}, status=status.HTTP_200_OK
+                {"detail": _("Account confirmed successfully")}, status=status.HTTP_200_OK
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -55,5 +55,4 @@ class UserProfileGenericView(generics.RetrieveUpdateAPIView):
     def get_object(self):
         queryset = self.get_queryset()
         obj = get_object_or_404(queryset, email=self.request.user.email)
-
         return obj

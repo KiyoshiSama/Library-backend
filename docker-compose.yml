@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   redis:
     container_name: redis
@@ -9,14 +11,12 @@ services:
   postgres:
     image: postgres:13
     container_name: postgres
-    environment:
-      POSTGRES_DB: test_db
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    env_file: 
+      - .env
   
   backend:
     build: .
@@ -26,41 +26,25 @@ services:
       - ./core:/app
     ports:
       - "8000:8000"
-    environment:
-      - SECRET_KEY=default
-      - DEBUG=True
     depends_on:
       - redis
       - postgres
-  
+    env_file:
+      - .env
+
   worker:
     build: .
     container_name: celery_worker
-    command: celery -A core worker --loglevel=info
+    command: celery -A core worker --loglevel=info -B
     volumes:
       - ./core:/app
     depends_on:
       - redis
       - backend
       - postgres
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-  
-  beat:
-    build: .
-    container_name: celery_beat
-    command: celery -A core beat --loglevel=info
-    volumes:
-      - ./core:/app
-    depends_on:
-      - redis
-      - backend
-      - postgres
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-  
+    env_file:
+      - .env
+
   smtp4dev:
     image: rnwood/smtp4dev:v3
     restart: always
@@ -70,8 +54,8 @@ services:
       - '143:143'
     volumes:
       - smtp4dev-data:/smtp4dev
-    environment:
-      - ServerOptions__HostName=smtp4dev
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

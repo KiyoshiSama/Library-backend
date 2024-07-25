@@ -12,22 +12,24 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 from datetime import timedelta
-import environ
+from decouple import Config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-env = environ.Env()
-environ.Env.read_env(BASE_DIR / ".env")
+# Load environment variables from the .env file
+config = Config(BASE_DIR.parent / ".env")
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = env("SECRET_KEY", default="test")
-DEBUG = env.bool("DEBUG", default=True)
-# SECURITY WARNING: don't run with debug turned on in production!
+SECRET_KEY = config("SECRET_KEY", default="test")
+DEBUG = config("DEBUG", default=False, cast=bool)
 
-ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", default=["*"])
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="*", cast=Csv())
+
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -80,18 +82,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "core.wsgi.application"
 
-
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("POSTGRES_DB", default="test_db"),
-        "USER": env("POSTGRES_USER", default="admin"),
-        "PASSWORD": env("POSTGRES_PASSWORD", default="admin"),
-        "HOST": env("POSTGRES_HOST", default="postgres"),
-        "PORT": env("POSTGRES_PORT", default="5432"),
+        "NAME": config("POSTGRES_DB", default="test_db"),
+        "USER": config("POSTGRES_USER", default="admin"),
+        "PASSWORD": config("POSTGRES_PASSWORD", default="admin"),
+        "HOST": config("POSTGRES_HOST", default="postgres"),
+        "PORT": config("POSTGRES_PORT", default="5432"),
     }
 }
 
@@ -112,10 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": [
@@ -126,19 +126,21 @@ REST_FRAMEWORK = {
 
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(
-        minutes=env.int("ACCESS_TOKEN_LIFETIME_MINUTES", default=60)
+        minutes=config("ACCESS_TOKEN_LIFETIME_MINUTES", default=60, cast=int)
     ),
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(
-        days=env.int("SLIDING_TOKEN_REFRESH_LIFETIME_DAYS", default=1)
+        days=config("SLIDING_TOKEN_REFRESH_LIFETIME_DAYS", default=1, cast=int)
     ),
     "SLIDING_TOKEN_LIFETIME": timedelta(
-        days=env.int("SLIDING_TOKEN_LIFETIME_DAYS", default=30)
+        days=config("SLIDING_TOKEN_LIFETIME_DAYS", default=30, cast=int)
     ),
     "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER": timedelta(
-        days=env.int("SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS", default=1)
+        days=config(
+            "SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS", default=1, cast=int
+        )
     ),
     "SLIDING_TOKEN_LIFETIME_LATE_USER": timedelta(
-        days=env.int("SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS", default=30)
+        days=config("SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS", default=30, cast=int)
     ),
 }
 
@@ -147,12 +149,11 @@ SIMPLE_JWT = {
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Tehran"
 
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -160,12 +161,8 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "static"
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
 
-# STATICFILES_DIRS = [
-#     BASE_DIR / "staticfiles",
-# ]
+STATICFILES_DIRS = []
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -176,27 +173,24 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "accounts.User"
 
-
 # smtp emailing configs
 
-EMAIL_BACKEND = env(
+EMAIL_BACKEND = config(
     "EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend"
 )
-EMAIL_HOST = env("EMAIL_HOST", default="smtp4dev")
-EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
-EMAIL_PORT = env.int("EMAIL_PORT", default=25)
-
+EMAIL_HOST = config("EMAIL_HOST", default="smtp4dev")
+EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="")
+EMAIL_PORT = config("EMAIL_PORT", default=25, cast=int)
 
 # celery emailing configs
 
-CELERY_BROKER_URL = env("CELERY_BROKER_URL", default="redis://redis:6379/0")
-CELERY_RESULT_BACKEND = env("CELERY_RESULT_BACKEND", default="redis://redis:6379/0")
+CELERY_BROKER_URL = config("CELERY_BROKER_URL", default="redis://redis:6379/0")
+CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND", default="redis://redis:6379/0")
 CELERY_ACCEPT_CONTENT = ["json"]
 CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "UTC"
-
 
 # caching configs
 
@@ -209,6 +203,8 @@ CACHES = {
         },
     }
 }
+
+# swagger config
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Library api",
