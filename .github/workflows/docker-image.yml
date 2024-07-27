@@ -1,0 +1,20 @@
+name: Docker Library CI
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+    branches: [ "main","develop" ]
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup docker compose
+      run: docker compose up -d
+    - name: Run tests
+      run: docker exec backend sh -c "pytest"
