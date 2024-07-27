@@ -38,6 +38,6 @@ jobs:
         echo REDIS_LOCATION=${{ secrets.REDIS_LOCATION }} >> .env
         cat .env
     - name: Setup docker compose
-      run: docker compose -f docker-compose-stage.yml up --build -d postgres redis
+      run: docker compose -f docker-compose-stage.yml up --build -d backend postgres redis
     - name: Run tests
       run: docker compose -f docker-compose-stage.yml exec backend sh -c "pytest" 
