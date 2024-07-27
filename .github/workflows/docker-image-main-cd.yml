@@ -1,0 +1,29 @@
+name: Docker Image CD on main
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    types: [closed]
+
+jobs:
+
+  Deploy:
+      if: github.event.pull_request.merged == true
+      name: Deploy
+      runs-on: ubuntu-latest
+
+      steps:
+      - uses: actions/checkout@v4
+      - name: connect and execute commands
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{secrets.USERNAME}}
+          password: ${{secrets.PASSWORD}}
+          host: ${{secrets.HOST}}
+          port: ${{secrets.PORT}}
+          script: |
+            cd ${{secrets.PROJECT_PATH}}
+            docker compose -f docker-compose-stage.yml stop
+            git pull
+            docker compose -f docker-compose-stage.yml restart
