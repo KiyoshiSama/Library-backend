@@ -28,6 +28,7 @@ def user(db):
     user = User.objects.create_user(
         email=faker.email(),
         password=faker.password(),
+        first_name=faker.first_name(),
     )
     return user
 
@@ -81,3 +82,33 @@ def hold(db, user, book):
         customer=user,
     )
     return hold
+
+
+@pytest.fixture
+def setup_checkouts(db, user):
+    book1 = Book.objects.create(
+        title=faker.word(),
+        description=faker.text(),
+        publisher=Publisher.objects.create(
+            name=faker.company(), address=faker.address()
+        ),
+        category=Category.objects.create(name=faker.word()),
+        publish_date=faker.date(),
+        page_number=faker.random_number(),
+        is_available=True,
+    )
+    book1.authors.set([Author.objects.create(name=faker.name()) for _ in range(2)])
+
+    checkout1 = Checkout.objects.create(
+        start_time=timezone.now().date() - timedelta(days=10),
+        end_time=timezone.now().date() + timedelta(days=2),
+        book=book1,
+        customer=User.objects.create_user(
+            email="testuser@example.com",
+            password=faker.password(),
+            first_name=faker.first_name(),
+        ),
+        is_returned=False,
+    )
+
+    return checkout1

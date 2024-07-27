@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   redis:
     container_name: redis
@@ -70,6 +68,18 @@ services:
       - '143:143'
     volumes:
       - smtp4dev-data:/smtp4dev
+    env_file:
+      - .env
+
+  test:
+    build: .
+    container_name: test_container
+    command: pytest
+    volumes:
+      - ./core:/app
+    depends_on:
+      - redis
+      - postgres
     env_file:
       - .env
 
