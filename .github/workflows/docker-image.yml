@@ -14,6 +14,31 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: create env file
+      run: |
+        touch .env
+        echo API_KEY=${{ secrets.SECRET_KEY }} >> .env
+        echo API_KEY=${{ secrets.DEBUG }} >> .env
+        echo API_KEY=${{ secrets.ALLOWED_HOSTS }} >> .env
+        echo API_KEY=${{ secrets.POSTGRES_DB }} >> .env
+        echo API_KEY=${{ secrets.POSTGRES_USER }} >> .env
+        echo API_KEY=${{ secrets.POSTGRES_PASSWORD }} >> .env
+        echo API_KEY=${{ secrets.POSTGRES_HOST }} >> .env
+        echo API_KEY=${{ secrets.POSTGRES_PORT }} >> .env
+        echo API_KEY=${{ secrets.ACCESS_TOKEN_LIFETIME_MINUTES }} >> .env
+        echo API_KEY=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_DAYS }} >> .env
+        echo API_KEY=${{ secrets.SLIDING_TOKEN_LIFETIME_DAYS }} >> .env
+        echo API_KEY=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS }} >> .env
+        echo API_KEY=${{ secrets.SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS }} >> .env
+        echo API_KEY=${{ secrets.EMAIL_BACKEND }} >> .env
+        echo API_KEY=${{ secrets.EMAIL_HOST }} >> .env
+        echo API_KEY=${{ secrets.EMAIL_HOST_USER }} >> .env
+        echo API_KEY=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+        echo API_KEY=${{ secrets.EMAIL_PORT }} >> .env
+        echo API_KEY=${{ secrets.CELERY_BROKER_URL }} >> .env
+        echo API_KEY=${{ secrets.CELERY_RESULT_BACKEND }} >> .env
+        echo API_KEY=${{ secrets.REDIS_LOCATION }} >> .env
+        cat .env
     - name: Setup docker compose
       run: docker compose -f docker-compose-stage.yml up --build
     - name: Run tests
