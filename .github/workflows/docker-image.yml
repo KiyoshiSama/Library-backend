@@ -7,35 +7,59 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v4
-    - name: create env file
-      run: |
-        touch .env
-        echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-        echo DEBUG=${{ secrets.DEBUG }} >> .env
-        echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
-        echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
-        echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-        echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-        echo POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} >> .env
-        echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
-        echo ACCESS_TOKEN_LIFETIME_MINUTES=${{ secrets.ACCESS_TOKEN_LIFETIME_MINUTES }} >> .env
-        echo SLIDING_TOKEN_REFRESH_LIFETIME_DAYS=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_DAYS }} >> .env
-        echo SLIDING_TOKEN_LIFETIME_DAYS=${{ secrets.SLIDING_TOKEN_LIFETIME_DAYS }} >> .env
-        echo SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS }} >> .env
-        echo SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS=${{ secrets.SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS }} >> .env
-        echo EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }} >> .env
-        echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
-        echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
-        echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
-        echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
-        echo CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }} >> .env
-        echo CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }} >> .env
-        echo REDIS_LOCATION=${{ secrets.REDIS_LOCATION }} >> .env
-        cat .env
-    - name: Setup docker compose
-      run: docker compose -f docker-compose-stage.yml up --build -d backend postgres redis test
+  Test:
+      name : Test
+      runs-on: ubuntu-latest
+  
+      steps:
+      - uses: actions/checkout@v4
+      - name: create env file
+        run: |
+          touch .env
+          echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+          echo DEBUG=${{ secrets.DEBUG }} >> .env
+          echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
+          echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
+          echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+          echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+          echo POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} >> .env
+          echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
+          echo ACCESS_TOKEN_LIFETIME_MINUTES=${{ secrets.ACCESS_TOKEN_LIFETIME_MINUTES }} >> .env
+          echo SLIDING_TOKEN_REFRESH_LIFETIME_DAYS=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_DAYS }} >> .env
+          echo SLIDING_TOKEN_LIFETIME_DAYS=${{ secrets.SLIDING_TOKEN_LIFETIME_DAYS }} >> .env
+          echo SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS }} >> .env
+          echo SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS=${{ secrets.SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS }} >> .env
+          echo EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }} >> .env
+          echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
+          echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
+          echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+          echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
+          echo CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }} >> .env
+          echo CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }} >> .env
+          echo REDIS_LOCATION=${{ secrets.REDIS_LOCATION }} >> .env
+          cat .env
+      - name: Setup docker compose
+        run: docker compose -f docker-compose-stage.yml up --build -d backend postgres redis test
+        
+  Deploy:
+      if: ${{ always() && contains(join(needs.*.result, ','),'success') }}
+      name: Deploy
+      needs: Test
+      runs-on: ubuntu-latest
+
+      steps:
+      - uses: actions/checkout@v4
+      - name: connect and execute commands
+        uses: appleboy/ssh-action@master
+        with:
+          username: ${{secrets.USERNAME}}
+          password: ${{secrets.PASSWORD}}
+          host: ${{secrets.HOST}}
+          port: ${{secrets.PORT}}
+          script: |
+            cd ${{secrets.PROJECT_PATH}}
+            docker compose -f docker-compose-stage.yml stop
+            git pull
+            docker compose -f docker-compose-stage.yml restart
+      
