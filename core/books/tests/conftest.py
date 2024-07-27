@@ -2,6 +2,7 @@ import pytest
 from faker import Faker
 from rest_framework.test import APIClient
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from books.models import Author, Book, Publisher, Category
 
 User = get_user_model()
@@ -13,6 +14,9 @@ faker = Faker()
 def api_client():
     return APIClient()
 
+@pytest.fixture(autouse=True)
+def clear_cache():
+    cache.clear()
 
 @pytest.fixture
 def user(db):

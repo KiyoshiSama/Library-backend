@@ -4,6 +4,7 @@ from faker import Faker
 from rest_framework.test import APIClient
 from django.contrib.auth import get_user_model
 from django.utils import timezone
+from django.core.cache import cache
 from transactions.models import Checkout, Hold
 from books.models import Author, Book, Publisher, Category
 
@@ -15,6 +16,11 @@ faker = Faker()
 @pytest.fixture
 def api_client():
     return APIClient()
+
+
+@pytest.fixture(autouse=True)
+def clear_cache():
+    cache.clear()
 
 
 @pytest.fixture

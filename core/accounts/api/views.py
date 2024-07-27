@@ -54,7 +54,6 @@ class ActiveAccountGenericApiView(generics.GenericAPIView):
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
-    permission_classes = [IsAuthenticated]
 
 
 class UserProfileGenericView(generics.RetrieveUpdateAPIView):
