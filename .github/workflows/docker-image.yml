@@ -7,9 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -17,29 +15,29 @@ jobs:
     - name: create env file
       run: |
         touch .env
-        echo API_KEY=${{ secrets.SECRET_KEY }} >> .env
-        echo API_KEY=${{ secrets.DEBUG }} >> .env
-        echo API_KEY=${{ secrets.ALLOWED_HOSTS }} >> .env
-        echo API_KEY=${{ secrets.POSTGRES_DB }} >> .env
-        echo API_KEY=${{ secrets.POSTGRES_USER }} >> .env
-        echo API_KEY=${{ secrets.POSTGRES_PASSWORD }} >> .env
-        echo API_KEY=${{ secrets.POSTGRES_HOST }} >> .env
-        echo API_KEY=${{ secrets.POSTGRES_PORT }} >> .env
-        echo API_KEY=${{ secrets.ACCESS_TOKEN_LIFETIME_MINUTES }} >> .env
-        echo API_KEY=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_DAYS }} >> .env
-        echo API_KEY=${{ secrets.SLIDING_TOKEN_LIFETIME_DAYS }} >> .env
-        echo API_KEY=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS }} >> .env
-        echo API_KEY=${{ secrets.SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS }} >> .env
-        echo API_KEY=${{ secrets.EMAIL_BACKEND }} >> .env
-        echo API_KEY=${{ secrets.EMAIL_HOST }} >> .env
-        echo API_KEY=${{ secrets.EMAIL_HOST_USER }} >> .env
-        echo API_KEY=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
-        echo API_KEY=${{ secrets.EMAIL_PORT }} >> .env
-        echo API_KEY=${{ secrets.CELERY_BROKER_URL }} >> .env
-        echo API_KEY=${{ secrets.CELERY_RESULT_BACKEND }} >> .env
-        echo API_KEY=${{ secrets.REDIS_LOCATION }} >> .env
+        echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
+        echo DEBUG=${{ secrets.DEBUG }} >> .env
+        echo ALLOWED_HOSTS=${{ secrets.ALLOWED_HOSTS }} >> .env
+        echo POSTGRES_DB=${{ secrets.POSTGRES_DB }} >> .env
+        echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
+        echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
+        echo POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} >> .env
+        echo POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} >> .env
+        echo ACCESS_TOKEN_LIFETIME_MINUTES=${{ secrets.ACCESS_TOKEN_LIFETIME_MINUTES }} >> .env
+        echo SLIDING_TOKEN_REFRESH_LIFETIME_DAYS=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_DAYS }} >> .env
+        echo SLIDING_TOKEN_LIFETIME_DAYS=${{ secrets.SLIDING_TOKEN_LIFETIME_DAYS }} >> .env
+        echo SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS=${{ secrets.SLIDING_TOKEN_REFRESH_LIFETIME_LATE_USER_DAYS }} >> .env
+        echo SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS=${{ secrets.SLIDING_TOKEN_LIFETIME_LATE_USER_DAYS }} >> .env
+        echo EMAIL_BACKEND=${{ secrets.EMAIL_BACKEND }} >> .env
+        echo EMAIL_HOST=${{ secrets.EMAIL_HOST }} >> .env
+        echo EMAIL_HOST_USER=${{ secrets.EMAIL_HOST_USER }} >> .env
+        echo EMAIL_HOST_PASSWORD=${{ secrets.EMAIL_HOST_PASSWORD }} >> .env
+        echo EMAIL_PORT=${{ secrets.EMAIL_PORT }} >> .env
+        echo CELERY_BROKER_URL=${{ secrets.CELERY_BROKER_URL }} >> .env
+        echo CELERY_RESULT_BACKEND=${{ secrets.CELERY_RESULT_BACKEND }} >> .env
+        echo REDIS_LOCATION=${{ secrets.REDIS_LOCATION }} >> .env
         cat .env
     - name: Setup docker compose
-      run: docker compose -f docker-compose-stage.yml up --build
+      run: docker compose -f docker-compose.yml up --build -d postgres redis
     - name: Run tests
-      run: docker compose -f docker-compose-stage.yml exec backend sh -c "pytest"
+      run: docker compose -f docker-compose.yml run --rm test
