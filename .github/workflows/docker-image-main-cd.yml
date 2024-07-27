@@ -9,7 +9,7 @@ on:
 jobs:
 
   Deploy:
-      if: github.event.pull_request.merged == true
+      if: github.event.pull_request.merged == true && github.base_ref == 'main'
       name: Deploy
       runs-on: ubuntu-latest
 
