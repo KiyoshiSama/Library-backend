@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   redis:
     container_name: redis
@@ -15,7 +17,7 @@ services:
       - "5432:5432"
     env_file: 
       - .env
-  
+
   backend:
     build: .
     container_name: library_api
@@ -25,7 +27,7 @@ services:
       - static_volume:/app/static
       - media_volume:/app/media
     expose:
-      - "8000 "
+      - "8000"
     depends_on:
       - redis
       - postgres
@@ -80,6 +82,27 @@ services:
     depends_on:
       - redis
       - postgres
+    env_file:
+      - .env
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672" 
+    env_file:
+      - .env
+
+  rabbitmq_listener:
+    build: .
+    container_name: rabbitmq_listener
+    restart : always
+    command: python manage.py launch_queue_listener
+    volumes:
+      - ./core:/app
+    depends_on:
+      - rabbitmq
     env_file:
       - .env
 

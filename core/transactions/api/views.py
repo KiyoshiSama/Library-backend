@@ -1,3 +1,4 @@
+import json
 from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -13,6 +14,7 @@ from transactions.api.serializers import (
     UserHoldListBooksSerializer,
 )
 from transactions.models import Checkout, Hold
+from transactions.logger.producer import ProducerUserCreated
 from books.models import Book
 
 
@@ -50,6 +52,9 @@ class BorrowBookGenericView(APIView):
                 book.is_available = False
                 book.save()
                 serializer.save()
+                ProducerUserCreated().publish(
+                    "book_borrowed_method", json.dumps(serializer.data)
+                )
                 return Response(
                     {"detail": _("book successfully borrowed")},
                     status=status.HTTP_201_CREATED,
