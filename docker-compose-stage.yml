@@ -19,10 +19,7 @@ services:
   backend:
     build: .
     container_name: library_api
-    command: |
-      python3 manage.py migrate &&
-      python3 manage.py collectstatic --noinput &&
-      python3 manage.py runserver 0.0.0.0:8000
+    command: python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - ./core:/app
       - static_volume:/app/static
@@ -86,6 +83,26 @@ services:
     env_file:
       - .env
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672" 
+    env_file:
+      - .env
+
+  rabbitmq_listener:
+    build: .
+    container_name: rabbitmq_listener
+    restart : always
+    command: python manage.py launch_queue_listener
+    volumes:
+      - ./core:/app
+    depends_on:
+      - rabbitmq
+    env_file:
+      - .env
 
 volumes:
   static_volume:
