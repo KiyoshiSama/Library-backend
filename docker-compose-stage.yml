@@ -19,7 +19,10 @@ services:
   backend:
     build: .
     container_name: library_api
-    command: python3 manage.py runserver 0.0.0.0:8000
+    command: |
+      python3 manage.py migrate &&
+      python3 manage.py collectstatic --noinput &&
+      python3 manage.py runserver 0.0.0.0:8000
     volumes:
       - ./core:/app
       - static_volume:/app/static
