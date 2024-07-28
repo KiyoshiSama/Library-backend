@@ -19,7 +19,6 @@ services:
   backend:
     build: .
     container_name: library_api
-    command:
     command: |
       - python3 manage.py migrate &&
       - python3 manage.py collectstatic --noinput &&
