@@ -55,11 +55,24 @@ class ActiveAccountGenericApiView(generics.GenericAPIView):
 class CustomTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
 
+class ViewAllUsersGenericView(generics.ListAPIView):
+    serializer_class = UserProfileSerializer
+    queryset = User.objects.all()
+    permission_classes = [IsAuthenticated]
+
+
+    def get_object(self):
+        queryset = self.get_queryset()
+        obj = get_object_or_404(
+            queryset, customer=self.request.user, pk=self.kwargs["pk"]
+        )
+        return obj
 
 class UserProfileGenericView(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserProfileSerializer
+    permission_classes = [IsAuthenticated]
+
 
     def get_object(self):
         queryset = self.get_queryset()

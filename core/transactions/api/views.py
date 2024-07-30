@@ -73,7 +73,7 @@ class BorrowBookGenericView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@method_decorator(cache_page(60 * 15), name="dispatch")
+@method_decorator(cache_page(60), name="dispatch")
 class UserBorrowedBooksGenericView(generics.ListAPIView):
     serializer_class = UserBorrowedBooksSerializer
     permission_classes = [IsAuthenticated]
@@ -96,7 +96,7 @@ class UpdateBorrowedBookGenericView(generics.RetrieveUpdateAPIView):
         return obj
 
 
-@method_decorator(cache_page(60 * 15), name="dispatch")
+@method_decorator(cache_page(60), name="dispatch")
 class UserHoldListBooksGenericView(generics.ListAPIView):
     serializer_class = UserHoldListBooksSerializer
     permission_classes = [IsAuthenticated]

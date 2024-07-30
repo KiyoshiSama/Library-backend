@@ -5,7 +5,8 @@ from accounts.api import views
 app_name = "accounts-api"
 
 urlpatterns = [
-    path("", views.UserProfileGenericView.as_view(), name="accounts"),
+    path("all-accounts", views.ViewAllUsersGenericView.as_view(), name="accounts-view"),
+    path("all-accounts/<int:pk>", views.UserProfileGenericView.as_view(), name="all-accounts"),
     path(
         "token-create/",
         views.CustomTokenObtainPairView.as_view(),
